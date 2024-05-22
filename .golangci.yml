@@ -3,12 +3,16 @@ linters-settings:
     min-complexity: 30
   misspell:
     locale: US
+  errcheck:
+    exclude-functions:
+      - fmt.Fprintf
+      - fmt.Println
 
 linters:
   disable-all: true
   enable:
     - goimports
-    - deadcode
+    - unused
     - errcheck
     - gocognit
     - gocyclo
