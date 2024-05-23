@@ -1,38 +1,47 @@
 package handler
 
 import (
-	"bytes"
 	"net/http"
 	"net/http/httptest"
 	"testing"
 
-	"github.com/go-playground/validator/v10"
 	"github.com/ky0yk/go_todo_app/entity"
 	"github.com/ky0yk/go_todo_app/store"
 	"github.com/ky0yk/go_todo_app/testutil"
 )
 
-func TestAddTask(t *testing.T) {
+func TestListTask(t *testing.T) {
 	type want struct {
 		status  int
 		rspFile string
 	}
 	tests := map[string]struct {
-		reqFile string
-		want    want
+		tasks map[entity.TaskID]*entity.Task
+		want  want
 	}{
 		"ok": {
-			reqFile: "testdata/addtask/ok_req.json.golden",
+			tasks: map[entity.TaskID]*entity.Task{
+				1: {
+					ID:     1,
+					Title:  "test1",
+					Status: "todo",
+				},
+				2: {
+					ID:     2,
+					Title:  "test2",
+					Status: "done",
+				},
+			},
 			want: want{
 				status:  http.StatusOK,
-				rspFile: "testdata/addtask/ok_rsp.json.golden",
+				rspFile: "testdata/list_task/ok_rsp.json.golden",
 			},
 		},
-		"badRequest": {
-			reqFile: "testdata/addtask/bad_req.json.golden",
+		"empty": {
+			tasks: map[entity.TaskID]*entity.Task{},
 			want: want{
-				status:  http.StatusBadRequest,
-				rspFile: "testdata/addtask/bad_rsp.json.golden",
+				status:  http.StatusOK,
+				rspFile: "testdata/list_task/empty_rsp.json.golden",
 			},
 		},
 	}
@@ -42,15 +51,9 @@ func TestAddTask(t *testing.T) {
 			t.Parallel()
 
 			w := httptest.NewRecorder()
-			r := httptest.NewRequest(
-				http.MethodPost,
-				"/tasks",
-				bytes.NewReader(testutil.LoadFile(t, tt.reqFile)),
-			)
+			r := httptest.NewRequest(http.MethodGet, "/tasks", nil)
 
-			sut := AddTask{Store: &store.TaskStore{
-				Tasks: map[entity.TaskID]*entity.Task{},
-			}, Validator: validator.New()}
+			sut := ListTask{Store: &store.TaskStore{Tasks: tt.tasks}}
 			sut.ServeHTTP(w, r)
 
 			resp := w.Result()
