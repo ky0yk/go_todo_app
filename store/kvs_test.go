@@ -22,7 +22,7 @@ func TestKVS(t *testing.T) {
 	t.Cleanup(func() {
 		cli.Del(ctx, key)
 	})
-	if err:= sut.Save(ctx, key, uid); err != nil {
+	if err := sut.Save(ctx, key, uid); err != nil {
 		t.Errorf("want no error, but got %v", err)
 	}
 }
@@ -32,7 +32,7 @@ func TestKVS_Load(t *testing.T) {
 
 	cli := testutil.OpenRedisForTest(t)
 	sut := &KVS{Cli: cli}
-	
+
 	t.Run("ok", func(t *testing.T) {
 		t.Parallel()
 
