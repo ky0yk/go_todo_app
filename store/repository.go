@@ -37,7 +37,7 @@ func New(ctx context.Context, cfg *config.Config) (*sqlx.DB, func(), error) {
 	if err != nil {
 		return nil, func() {}, err
 	}
-	// Openは実際に接続テストが行われない
+	// Openは実際に接続テストが行われない。
 	ctx, cancel := context.WithTimeout(ctx, 2*time.Second)
 	defer cancel()
 	if err := db.PingContext(ctx); err != nil {
@@ -73,7 +73,7 @@ type Queryer interface {
 }
 
 var (
-	// インターフェースが期待通りに宣言されているか確認
+	// インターフェイスが期待通りに宣言されているか確認
 	_ Beginner = (*sqlx.DB)(nil)
 	_ Preparer = (*sqlx.DB)(nil)
 	_ Queryer  = (*sqlx.DB)(nil)
